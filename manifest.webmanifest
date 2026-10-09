@@ -3,7 +3,7 @@
   "name": "Everyday Sorted",
   "short_name": "Everyday Sorted",
   "description": "Plan meals, organise shopping and make everyday easier.",
-  "start_url": "./index.html?installed=v33",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#faf9f5",
