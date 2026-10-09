@@ -9,6 +9,15 @@
 .v29-counter strong{min-width:20px;text-align:center;font-size:19px}
 .v29-meal .mealactions{display:flex;flex-wrap:wrap;gap:6px}
 .v29-meal .mealactions button{font-size:12px;padding:9px}
+.day-card{margin:16px 0;padding:16px;border-radius:18px}
+.v29-meal{padding:13px 0;border-top:1px solid rgba(128,128,128,.18)}
+.v29-count{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:12px 0;font-size:14px}
+.v29-counter{display:flex;align-items:center;gap:12px}
+.v29-counter button{min-width:40px;min-height:40px;padding:7px;font-size:22px}
+.v29-counter strong{min-width:20px;text-align:center;font-size:19px}
+.v29-meal .mealactions{display:flex;flex-wrap:wrap;gap:6px}
+.v29-meal .mealactions button{font-size:12px;padding:9px}
+
 </style><style id="v18-design">
 /* Compact mobile-first recipe browsing */
 #recipes>.recipe{padding:14px;margin-top:14px}
@@ -455,16 +464,7 @@ function printableShoppingHtml(){
  const estimate=money(dinnerEstimate+daytimeEstimate);
  return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Everyday Sorted — Shopping List</title><style>'+ 
  '@page{size:A4;margin:14mm}*{box-sizing:border-box}body{margin:0;background:#edf2ed;color:#183e32;font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.sheet{max-width:850px;margin:24px auto;padding:38px;background:white;box-shadow:0 8px 28px #153c2920;border-radius:18px}.brand{font-size:12px;font-weight:800;letter-spacing:.18em;color:#43836a;text-transform:uppercase}h1{font-size:34px;line-height:1.12;margin:9px 0 8px}.subtitle{color:#607b6f;margin:0 0 20px}.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}.stat{border:1px solid #dce8dd;background:#f4f8f4;border-radius:10px;padding:9px 13px;font-size:13px}.stat b{display:block;font-size:18px;color:#174f3b}.groups{columns:2;column-gap:25px}.group{break-inside:avoid;page-break-inside:avoid;margin:0 0 20px}.group h2{font-size:14px;text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid #cce1d3;padding-bottom:6px;margin:0 0 9px}ul{list-style:none;margin:0;padding:0}li{display:flex;align-items:flex-start;gap:10px;padding:6px 0;border-bottom:1px solid #eef2ee;overflow-wrap:anywhere}.tick{width:17px;height:17px;border:1.7px solid #4b816b;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;flex:none;margin-top:3px;font-size:13px;font-weight:bold}.note{border-top:1px solid #dce8dd;padding-top:14px;color:#64786d;font-size:11px;margin-top:22px}.toolbar{display:flex;justify-content:center;gap:10px;padding:16px}.toolbar button{background:#174d3a;color:white;border:0;padding:13px 22px;border-radius:10px;font-weight:700;font-size:15px}.toolbar .back{background:#dce8df;color:#174d3a}@media(max-width:600px){.sheet{margin:0;padding:23px 17px;border-radius:0;box-shadow:none}.groups{columns:1}h1{font-size:28px}}@media print{body{background:white}.toolbar{display:none}.sheet{margin:0;padding:0;max-width:none;box-shadow:none;border-radius:0}.groups{columns:2}.group{break-inside:avoid}li{font-size:12px;padding:4px 0}.note{font-size:10px}}'+
- '
-.day-card{margin:16px 0;padding:16px;border-radius:18px}
-.v29-meal{padding:13px 0;border-top:1px solid rgba(128,128,128,.18)}
-.v29-count{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:12px 0;font-size:14px}
-.v29-counter{display:flex;align-items:center;gap:12px}
-.v29-counter button{min-width:40px;min-height:40px;padding:7px;font-size:22px}
-.v29-counter strong{min-width:20px;text-align:center;font-size:19px}
-.v29-meal .mealactions{display:flex;flex-wrap:wrap;gap:6px}
-.v29-meal .mealactions button{font-size:12px;padding:9px}
-</style></head><body><div class="toolbar"><button onclick="window.print()">🖨 Print / Save as PDF</button><button class="back" onclick="window.close()">Close</button></div><main class="sheet"><div class="brand">Everyday Sorted</div><h1>Your shopping list</h1><p class="subtitle">Everything for your planned meals, neatly organised.</p><div class="stats"><div class="stat">People<b>'+state.people+'</b></div><div class="stat">Ingredients<b>'+items.length+'</b></div><div class="stat">Already ticked<b>'+completed+'</b></div><div class="stat">Estimated recipe cost<b>'+escapeHtml(estimate)+'</b></div></div><div class="groups">'+cards+'</div><p class="note">Costs are illustrative recipe estimates, not supermarket basket prices. Quantities and pack sizes may differ. Check product labels, allergens and what you already have before shopping. Tick boxes on this printout by hand.</p></main></body></html>';
+ '</style></head><body><div class="toolbar"><button onclick="window.print()">🖨 Print / Save as PDF</button><button class="back" onclick="window.close()">Close</button></div><main class="sheet"><div class="brand">Everyday Sorted</div><h1>Your shopping list</h1><p class="subtitle">Everything for your planned meals, neatly organised.</p><div class="stats"><div class="stat">People<b>'+state.people+'</b></div><div class="stat">Ingredients<b>'+items.length+'</b></div><div class="stat">Already ticked<b>'+completed+'</b></div><div class="stat">Estimated recipe cost<b>'+escapeHtml(estimate)+'</b></div></div><div class="groups">'+cards+'</div><p class="note">Costs are illustrative recipe estimates, not supermarket basket prices. Quantities and pack sizes may differ. Check product labels, allergens and what you already have before shopping. Tick boxes on this printout by hand.</p></main></body></html>';
 }
 $('print-shopping').addEventListener('click',()=>{const html=printableShoppingHtml();if(!html){toast('Generate a meal plan first');return}const w=window.open('','_blank');if(!w){toast('Allow pop-ups to open your printable list');return}w.document.open();w.document.write(html);w.document.close()});
 </script></body></html>
