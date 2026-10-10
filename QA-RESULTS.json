@@ -1,0 +1,23 @@
+{
+  "passed": 16,
+  "passes": [
+    "Fresh install has no phantom shopping ingredients",
+    "All dinner recipes have unique names and cooking methods",
+    "Every mapped image exists",
+    "Generate a complete week",
+    "Skip meal excludes ingredients and cost",
+    "Print cost equals the planner with different servings",
+    "Whole-day toggle updates visible meal rows immediately",
+    "Correct units for pork, courgette, spaghetti and seasoning",
+    "Vegetarian generation and swaps exclude meat/fish lunches",
+    "Avoid preferences apply to daytime swaps",
+    "Cupboard excludes shopping export and can be restored",
+    "Saved plans and preferences survive reload",
+    "Malformed local data recovers without a startup crash",
+    "Recipe search and favourites work",
+    "Zero servings produces no meal ingredients or costs",
+    "Current version does not show a false update"
+  ],
+  "failures": [],
+  "recipes": 65
+}

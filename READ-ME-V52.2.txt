@@ -1,0 +1,3 @@
+EVERYDAY SORTED V52.2 — DEVELOPMENT PREVIEW ONLY
+Not customer-ready. 24 generated 117x107px preview crops, remaining photos unverified or missing.
+Fixed JavaScript syntax in image mapping. Do NOT publish to production.
