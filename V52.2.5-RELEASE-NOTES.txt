@@ -1,0 +1,3 @@
+Everyday Sorted V52.2.5 - illustrative coverage update
+
+19 previously unassigned recipes now have visual preview images. All 65 entries in photo audit have assigned files. IMPORTANT: New preview images are food illustrations selected by visual similarity, not verified exact ingredient photographs; each new preview is labelled with its recipe name. The website was not deployed. Review each picture before publication. Existing approved photos unchanged.
