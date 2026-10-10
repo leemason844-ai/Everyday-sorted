@@ -767,7 +767,7 @@ initCelebrations();
 
 // V33: server version checks. Never erase local storage during an update.
 (function(){
- const current=50, banner=document.getElementById('update-banner');
+ const current=51, banner=document.getElementById('update-banner');
  let latest=50,checking=false,lastCheck=0;
  async function checkVersion(){
   if(checking || Date.now()-lastCheck<30000)return;
