@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#173e35"><title>Your account | Everyday Sorted</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#183a33;background:#f3f6f2}*{box-sizing:border-box}
+body{margin:0;min-height:100vh}header{background:linear-gradient(125deg,#173e35,#2f6a54);color:white;padding:25px 18px}
+.wrap{max-width:480px;margin:auto}header a{color:#e5f5e8;text-decoration:none;font-size:14px}h1{font-size:29px;margin:14px 0 5px}header p{margin:0;color:#d6e8df}
+main{padding:24px 16px 60px}.panel{background:white;border:1px solid #dfe8e0;border-radius:22px;padding:24px;box-shadow:0 5px 22px #173e3510}
+h2{margin:0 0 8px;font-size:23px}p{line-height:1.5}.muted{color:#60776d;font-size:14px}
+.tabs{display:flex;gap:8px;margin:18px 0}.tabs button{flex:1;border:1px solid #cadbd0;border-radius:11px;padding:12px;background:white;color:#173e35;font-weight:750}
+.tabs button.active{background:#173e35;color:white}label{display:block;font-weight:700;font-size:14px;margin:15px 0 7px}
+input{width:100%;padding:13px;border:1px solid #cddbd1;border-radius:11px;font:inherit;min-height:45px}
+button{font:inherit;cursor:pointer}button.primary{background:#173e35;color:white;border:0;border-radius:12px;padding:14px 16px;font-weight:800;width:100%;margin-top:18px}
+button:disabled{opacity:.65;cursor:wait}.textbtn{background:none;border:0;color:#245b48;text-decoration:underline;margin-top:15px;padding:7px 0}
+#status{padding:12px;border-radius:12px;background:#eaf2ea;white-space:pre-wrap;line-height:1.5;display:none;margin-top:18px}
+#status.error{background:#fff0ed;color:#8e2f22}a{color:#245b48}small{color:#60776d}.hide{display:none!important}
+</style></head><body>
+<header><div class="wrap"><a href="./index.html">← Back to Everyday Sorted</a><h1>Everyday Sorted</h1><p>Your meals. Your plan. Your account.</p></div></header>
+<main class="wrap"><section class="panel">
+<div id="guest"><h2>Welcome</h2><p class="muted">Create a free beta account or sign in.</p>
+<div class="tabs"><button id="tab-signup" type="button" class="active">Sign up</button><button id="tab-login" type="button">Log in</button></div>
+<form id="auth-form">
+<label for="email">Email address</label><input id="email" type="email" autocomplete="email" required maxlength="254">
+<label for="password">Password</label><input id="password" type="password" autocomplete="new-password" required minlength="8">
+<p class="muted" id="password-hint">Use at least 8 characters and a unique password.</p>
+<button id="submit" class="primary" type="submit">Create free account</button>
+</form><button class="textbtn" id="forgot" type="button">Forgot password?</button></div>
+<div id="reset" class="hide"><h2>Choose a new password</h2><form id="reset-form">
+<label for="new-password">New password</label><input id="new-password" type="password" autocomplete="new-password" required minlength="8">
+<button class="primary" type="submit" id="reset-submit">Update password</button></form></div>
+<div id="signed-in" class="hide"><h2>You're signed in</h2><p class="muted" id="signed-in-email"></p>
+<p>Account access is working. <strong>Cloud meal-plan saving isn't enabled in this preview yet.</strong> Your existing plans on this device won't be moved or changed.</p>
+<a href="./index.html">Return to meal planner →</a><button class="primary" id="logout" type="button">Log out</button></div>
+<div id="status" role="status" aria-live="polite"></div>
+</section><p class="muted">Beta preview. Your email is used for your account and authentication messages.</p></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+'use strict';
+const URL="https://zqdndjrrouxmtwaaifcw.supabase.co", KEY="sb_publishable_4Cf7HM0MgRQeZ9U3sQW1YA_Mu1N9R9c";
+const $=id=>document.getElementById(id), status=$('status');
+function message(text,error=false){status.textContent=text;status.classList.toggle('error',error);status.style.display='block'}
+function clear(){status.textContent='';status.style.display='none'}
+if(!window.supabase){message('Could not load the sign-in service. Check your internet connection and refresh.',true);return}
+const client=window.supabase.createClient(URL,KEY,{auth:{detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
+let mode='signup', recovering=false;
+function show(which){$('guest').classList.toggle('hide',which!=='guest');$('signed-in').classList.toggle('hide',which!=='signed');$('reset').classList.toggle('hide',which!=='reset')}
+function tab(m){mode=m;clear();$('tab-signup').classList.toggle('active',m==='signup');$('tab-login').classList.toggle('active',m==='login');$('submit').textContent=m==='signup'?'Create free account':'Log in';$('password-hint').classList.toggle('hide',m!=='signup');$('password').autocomplete=m==='signup'?'new-password':'current-password'}
+$('tab-signup').onclick=()=>tab('signup');$('tab-login').onclick=()=>tab('login');
+function safeError(error){message(error?.message||'Something went wrong. Please try again.',true)}
+function redirect(){return new URL('auth.html',window.location.href).toString()}
+$('auth-form').addEventListener('submit',async e=>{
+e.preventDefault();clear();const btn=$('submit');btn.disabled=true;
+try{
+ const email=$('email').value.trim(), password=$('password').value;
+ const result=mode==='signup'
+ ?await client.auth.signUp({email,password,options:{emailRedirectTo:redirect()}})
+ :await client.auth.signInWithPassword({email,password});
+ if(result.error)throw result.error;
+ if(mode==='signup')message('Check your inbox for a confirmation link. After confirming, return here to log in. If you do not receive it, check spam.');
+ else {message('Signed in successfully.');await updateSession()}
+}catch(err){safeError(err)}finally{btn.disabled=false}
+});
+$('forgot').onclick=async()=>{
+ const email=$('email').value.trim();
+ if(!email){message('Enter your email address first, then tap Forgot password.',true);return}
+ clear();
+ const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:redirect()});
+ if(error)safeError(error);else message('If an account exists for this email, a password reset link will be sent. Check your inbox and spam.');
+};
+$('reset-form').addEventListener('submit',async e=>{
+e.preventDefault();const btn=$('reset-submit');btn.disabled=true;clear();
+try{const {error}=await client.auth.updateUser({password:$('new-password').value});if(error)throw error;recovering=false;message('Password updated. You are now signed in.');await updateSession()}
+catch(err){safeError(err)}finally{btn.disabled=false}
+});
+$('logout').onclick=async()=>{const {error}=await client.auth.signOut();if(error)safeError(error);else{recovering=false;show('guest');tab('login');message('Logged out.')}};
+async function updateSession(){
+ if(recovering){show('reset');return}
+ const {data:{session},error}=await client.auth.getSession();
+ if(error){safeError(error);return}
+ if(session){$('signed-in-email').textContent=session.user.email||'';show('signed')}
+ else show('guest');
+}
+client.auth.onAuthStateChange((event)=>{
+ if(event==='PASSWORD_RECOVERY'){recovering=true;show('reset');message('Enter your new password below.')}
+ else if(event==='SIGNED_OUT'){recovering=false;show('guest')}
+ else if(event==='SIGNED_IN'&&!recovering){updateSession()}
+});
+updateSession();
+})();
+</script></body></html>
