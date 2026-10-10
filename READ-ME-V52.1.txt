@@ -1,0 +1,8 @@
+Everyday Sorted V52.1 - PHOTO QUALITY PATCH
+
+This is an incremental quality-control update, NOT the promised full photo collection.
+Existing assigned photos still need manual visual approval. Recipes without a reliable match show a clearly labelled placeholder.
+Irish vegetable stew mapping was removed following user report of a mismatch.
+The PHOTO-AUDIT-V52.1.csv file lists the outstanding photography work.
+Existing meal-planning code is retained. Back up data from More before replacing a live website.
+Upload website files from the ZIP root to GitHub; do not upload the outer folder.
