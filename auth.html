@@ -37,12 +37,12 @@ button:disabled{opacity:.65;cursor:wait}.textbtn{background:none;border:0;color:
 <script>
 (function(){
 'use strict';
-const URL="https://zqdndjrrouxmtwaaifcw.supabase.co", KEY="sb_publishable_4Cf7HM0MgRQeZ9U3sQW1YA_Mu1N9R9c";
+const SUPABASE_URL="https://zqdndjrrouxmtwaaifcw.supabase.co", KEY="sb_publishable_4Cf7HM0MgRQeZ9U3sQW1YA_Mu1N9R9c";
 const $=id=>document.getElementById(id), status=$('status');
 function message(text,error=false){status.textContent=text;status.classList.toggle('error',error);status.style.display='block'}
 function clear(){status.textContent='';status.style.display='none'}
 if(!window.supabase){message('Could not load the sign-in service. Check your internet connection and refresh.',true);return}
-const client=window.supabase.createClient(URL,KEY,{auth:{detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
+const client=window.supabase.createClient(SUPABASE_URL,KEY,{auth:{detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
 let mode='signup', recovering=false;
 function show(which){$('guest').classList.toggle('hide',which!=='guest');$('signed-in').classList.toggle('hide',which!=='signed');$('reset').classList.toggle('hide',which!=='reset')}
 function tab(m){mode=m;clear();$('tab-signup').classList.toggle('active',m==='signup');$('tab-login').classList.toggle('active',m==='login');$('submit').textContent=m==='signup'?'Create free account':'Log in';$('password-hint').classList.toggle('hide',m!=='signup');$('password').autocomplete=m==='signup'?'new-password':'current-password'}
