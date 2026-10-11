@@ -43,12 +43,17 @@ function message(text,error=false){status.textContent=text;status.classList.togg
 function clear(){status.textContent='';status.style.display='none'}
 if(!window.supabase){message('Could not load the sign-in service. Check your internet connection and refresh.',true);return}
 const client=window.supabase.createClient(SUPABASE_URL,KEY,{auth:{detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
-let mode='signup', recovering=false;
+let mode='signup', recovering=false, recoveryVerified=false;
+// A recovery link must never be treated as an ordinary sign-in while Supabase processes it.
+const query=new URLSearchParams(window.location.search);
+const hash=new URLSearchParams(window.location.hash.replace(/^#/,''));
+const recoveryLink=query.get('type')==='recovery'||hash.get('type')==='recovery';
+if(recoveryLink){recovering=true;message('Verifying password-reset link…')}
 function show(which){$('guest').classList.toggle('hide',which!=='guest');$('signed-in').classList.toggle('hide',which!=='signed');$('reset').classList.toggle('hide',which!=='reset')}
 function tab(m){mode=m;clear();$('tab-signup').classList.toggle('active',m==='signup');$('tab-login').classList.toggle('active',m==='login');$('submit').textContent=m==='signup'?'Create free account':'Log in';$('password-hint').classList.toggle('hide',m!=='signup');$('password').autocomplete=m==='signup'?'new-password':'current-password'}
 $('tab-signup').onclick=()=>tab('signup');$('tab-login').onclick=()=>tab('login');
 function safeError(error){message(error?.message||'Something went wrong. Please try again.',true)}
-function redirect(){return new URL('auth.html',window.location.href).toString()}
+function redirect(){return new URL('/auth.html',window.location.origin).toString()}
 $('auth-form').addEventListener('submit',async e=>{
 e.preventDefault();clear();const btn=$('submit');btn.disabled=true;
 try{
@@ -66,26 +71,39 @@ $('forgot').onclick=async()=>{
  if(!email){message('Enter your email address first, then tap Forgot password.',true);return}
  clear();
  const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:redirect()});
- if(error)safeError(error);else message('If an account exists for this email, a password reset link will be sent. Check your inbox and spam.');
+ if(error)safeError(error);else message('If an account exists for this email, a password reset link will be sent. Check your inbox and spam. Open the link directly; avoid long-press previews, which can use a one-time link.');
 };
 $('reset-form').addEventListener('submit',async e=>{
 e.preventDefault();const btn=$('reset-submit');btn.disabled=true;clear();
-try{const {error}=await client.auth.updateUser({password:$('new-password').value});if(error)throw error;recovering=false;message('Password updated. You are now signed in.');await updateSession()}
-catch(err){safeError(err)}finally{btn.disabled=false}
+try{
+ if(!recoveryVerified)throw new Error('Password reset link has not been verified. Request a fresh link and open it directly.');
+ const {error}=await client.auth.updateUser({password:$('new-password').value});if(error)throw error;
+ recovering=false;recoveryVerified=false;
+ message('Password updated. You are now signed in.');await updateSession();
+}catch(err){safeError(err)}finally{btn.disabled=false}
 });
-$('logout').onclick=async()=>{const {error}=await client.auth.signOut();if(error)safeError(error);else{recovering=false;show('guest');tab('login');message('Logged out.')}};
+$('logout').onclick=async()=>{const {error}=await client.auth.signOut();if(error)safeError(error);else{recovering=false;recoveryVerified=false;show('guest');tab('login');message('Logged out.')}};
 async function updateSession(){
- if(recovering){show('reset');return}
+ if(recovering){if(recoveryVerified)show('reset');return}
  const {data:{session},error}=await client.auth.getSession();
  if(error){safeError(error);return}
+ if(recovering)return;
  if(session){$('signed-in-email').textContent=session.user.email||'';show('signed')}
  else show('guest');
 }
 client.auth.onAuthStateChange((event)=>{
- if(event==='PASSWORD_RECOVERY'){recovering=true;show('reset');message('Enter your new password below.')}
- else if(event==='SIGNED_OUT'){recovering=false;show('guest')}
+ if(event==='PASSWORD_RECOVERY'){
+   recovering=true;recoveryVerified=true;
+   show('reset');message('Enter your new password below.');
+ }else if(event==='SIGNED_OUT'&&!recovering){show('guest')}
  else if(event==='SIGNED_IN'&&!recovering){updateSession()}
 });
-updateSession();
+async function initialise(){
+ const {error}=await client.auth.getSession();
+ if(error){safeError(error);return}
+ if(recovering&&!recoveryVerified){show('guest');tab('login');message('This reset link could not be verified. It may have expired or been opened by a preview. Request a fresh link and open it directly.',true);return}
+ await updateSession();
+}
+initialise();
 })();
 </script></body></html>
