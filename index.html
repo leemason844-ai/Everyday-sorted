@@ -587,7 +587,11 @@ const v11Methods={
  'Beef mince cottage pie':['Heat oven to 200°C (180°C fan). Peel and dice potatoes, boil until tender, drain and mash with a little reserved cooking water.','Heat measured cooking oil in a pan; soften chopped onion and carrot. Add beef mince and cook thoroughly, breaking it up.','Stir in peas and a little water; simmer 10 minutes until the filling is cooked and thickened.','Put filling in an ovenproof dish, spread mashed potatoes on top and bake around 20 minutes until piping hot and golden.']
 };
 const originalMethodSteps=methodSteps;
-methodSteps=function(r){return v11Methods[r.name]||originalMethodSteps(r)};
+methodSteps=function(r){
+  // Database-published instructions must take priority over legacy built-in methods.
+  if(r && r.cloudPublished && Array.isArray(r.steps) && r.steps.length) return r.steps;
+  return v11Methods[r.name]||originalMethodSteps(r);
+};
 function safetyNote(r){
  const n=r.name.toLowerCase();
  if(/peanut vegetable noodles/.test(n))return 'Contains peanuts and typically soy and wheat; check every ingredient label and cross-contact information. Not suitable for people with relevant allergies.';
@@ -927,7 +931,7 @@ function normalizeCloudRecipe(record){
  if(parsed.some(x=>!x))return null;
  const serving=Number(record.servings)||1;
  if(!Number.isFinite(serving)||serving<1||serving>100)return null;
- const r={name:record.name.trim(),styles:['balanced'],cost:Number(record.cost_per_serving)||0,ingredients:{},unit:{},steps,
+ const r={name:record.name.trim(),cloudPublished:true,styles:['balanced'],cost:Number(record.cost_per_serving)||0,ingredients:{},unit:{},steps,
    photo_url:typeof record.photo_url==='string'&&/^https:\/\//.test(record.photo_url)?record.photo_url:''};
  for(const item of parsed){
    const name=item.name;
