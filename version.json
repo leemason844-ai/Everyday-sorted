@@ -1,1 +1,4 @@
-{"version":520400,"label":"V52.4 - manual cloud save/load"}
+{
+  "version": 520500,
+  "label": "V52.5 TEST - automatic cloud saving"
+}
