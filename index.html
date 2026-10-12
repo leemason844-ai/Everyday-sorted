@@ -165,6 +165,9 @@ daytimeRecipes.lunch.push(...[{"name":"Mediterranean chickpea couscous","cost":1
 function makeDayMeals(){return {breakfast:days.map((_,i)=>i%daytimeRecipes.breakfast.length),lunch:days.map((_,i)=>i%daytimeRecipes.lunch.length)}}
 function dayRecipe(type,i){const a=daytimeRecipes[type];return a[((state.dayMeals?.[type]?.[i]??i)%a.length+a.length)%a.length]}
 function renderDaytime(){const el=$('daytime-output');if(el)el.innerHTML=''}
+// Record whether this browser had a plan before startup code can create a starter plan.
+// This flag is only for the current page load; real edits always take precedence.
+window.__esFreshPlanAtBoot = !localStorage.getItem('everyday-sorted-v3') && !localStorage.getItem('everyday-sorted-v2');
 let state={weeklyBudget:120,dayMeals:{},fullDay:true,plan:[],people:2,budget:65,checked:{},removed:{},money:{},tasks:[],favourites:[],ratings:{},disliked:[],pantry:""};try{const saved=JSON.parse(localStorage.getItem('everyday-sorted-v3'));if(saved&&typeof saved==='object')state={...state,...saved};else {const old=JSON.parse(localStorage.getItem('everyday-sorted-v2'));if(old&&typeof old==='object')state={...state,...old}}}catch(e){}normalizeSavedState(state);if(!state.dayMeals||!Array.isArray(state.dayMeals.breakfast)||!Array.isArray(state.dayMeals.lunch))state.dayMeals=makeDayMeals();if(state.fullDay===undefined)state.fullDay=true;function mealCount(type,i){const n=state.mealPeople?.[type]?.[i];return Number.isInteger(n)&&n>=0&&n<=12?n:state.people}
 function normalizeSavedState(data){
  const record=x=>x&&typeof x==='object'&&!Array.isArray(x);
@@ -1058,8 +1061,9 @@ async function refresh(){
    ready=true;dirty=!!local;
    say(local?'Signed in. Saving your first plan…':'Signed in. Your changes will save automatically.');
    if(dirty)scheduleSave();
-  }else if(!local){
-   // New device with no local plan: load the existing cloud plan automatically.
+  }else if(!local || (window.__esFreshPlanAtBoot && !dirty)){
+   // A genuinely new browser may have an auto-created starter plan by now.
+   // Only replace that untouched starter; never replace an existing or edited plan.
    if(!row.plan_data||typeof row.plan_data!=='object'||Array.isArray(row.plan_data))throw Error('Cloud plan is invalid');
    localStorage.setItem(KEY,JSON.stringify(row.plan_data));markSynced();
    sessionStorage.setItem(SUCCESS,'1');location.reload();return;
