@@ -1,0 +1,29 @@
+/* Everyday Sorted V53 — isolated premium homepage preview. */
+:root{--v53-ink:#25372b;--v53-sage:#b8c5a8;--v53-olive:#648c35;--v53-cream:#f7f8f2}
+body{background:var(--v53-cream)}
+header{background:#f7f8f2;color:var(--v53-ink);padding:19px 18px 10px}
+header .wrap{max-width:1050px}
+header .brand-lockup{display:flex;align-items:center;gap:12px}
+header .brand-lockup img{width:46px;height:46px}
+header .eyebrow{color:#68815c;font-size:10px;letter-spacing:.13em}
+header h1{font-size:clamp(23px,4vw,32px);color:#25372b;letter-spacing:-.045em;margin:3px 0}
+header p{font-size:12px;color:#6e7b69;margin:0}
+main{margin-top:8px}
+main>.intro{font-size:12px;color:#77816e;margin:0 4px 15px}
+#home.home-premium{background:transparent;border:0;box-shadow:none;padding:0;margin:0}
+#home .tag{background:#e6eddc;color:#557640}
+#home .home-hero{background:#e8eddf;border:1px solid #dce5d3;border-radius:24px;overflow:hidden;padding:16px;gap:12px;box-shadow:0 12px 32px #263e2410}
+#home .home-hero h2{color:#273a2d;letter-spacing:-.05em}
+#home .home-hero p{color:#64745e}
+#home .home-hero img{border-radius:18px;object-fit:cover}
+#home .home-cta{background:#638e38;border-radius:14px;box-shadow:none}
+#home .home-section-title{margin-top:23px}
+#home .home-section-title h3,#home .home-subheading{color:#283c2d;letter-spacing:-.035em}
+#home .home-actions button{background:#fff;border:1px solid #e5eadf;border-radius:20px;box-shadow:0 5px 16px #253a2510}
+#home .home-action-icon{background:#e9f0df;border-radius:13px}
+#home .home-inspiration button{background:#fff;border:1px solid #e6ebdf;border-radius:18px;overflow:hidden}
+#home .home-inspiration img{object-fit:cover}
+#home #v16-dashboard,#home #celebration-home{background:#fff;border:1px solid #e5eadf;border-radius:20px}
+.bottom{background:#fff;border-top:1px solid #e4eadf}
+.nav button.active{background:#e8f0dc;color:#517a2c}
+@media(min-width:700px){#home .home-hero{padding:25px}}
