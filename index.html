@@ -315,6 +315,9 @@ if(extraForm)extraForm.addEventListener('submit',e=>{
 });
 // Shopping list renders during app initialization.
 function money(n){return '£'+Number(n||0).toFixed(2)}function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function toast(s){$('toast').textContent=s;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2200)}function tab(id){document.querySelectorAll('main section').forEach(x=>x.classList.toggle('hide',x.id!==id));document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x.dataset.tab===(['money','week'].includes(id)?'more':id)));window.scrollTo({top:0,behavior:'smooth'})}document.querySelectorAll('[data-tab]').forEach(x=>x.addEventListener('click',()=>tab(x.dataset.tab)));document.querySelectorAll('[data-go]').forEach(x=>x.addEventListener('click',()=>tab(x.dataset.go)));
+// Open a requested tab when returning from a separate page.
+if(window.location.hash==='#meals')tab('meals');
+window.addEventListener('hashchange',()=>{if(window.location.hash==='#meals')tab('meals')});
 function plan(){
  const style=$('style').value,people=Number($('people').value),budget=Number($('budget').value),weekly=Number($('weekly-budget').value);
  const avoid=$('avoid').value.toLowerCase().split(',').map(x=>x.trim()).filter(Boolean);
